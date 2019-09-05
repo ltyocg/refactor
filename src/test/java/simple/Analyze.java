@@ -19,8 +19,8 @@ class Analyze {
                         f.getRange().map(r -> r.begin.line).orElse(-1)));
     }
 
+    @Test
     void other(){
         JavaParser javaParser=new JavaParser();
-        javaParser.parse()
     }
 }
