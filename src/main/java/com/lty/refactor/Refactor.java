@@ -1,6 +1,6 @@
 package com.lty.refactor;
 
-import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 
 /**
  * 重构器
@@ -9,7 +9,7 @@ public interface Refactor {
     /**
      * 执行操作
      *
-     * @param compilationUnit
+     * @param node
      */
-    void execute(CompilationUnit compilationUnit);
+    void execute(Node node);
 }
