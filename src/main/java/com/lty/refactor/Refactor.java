@@ -10,6 +10,7 @@ public interface Refactor {
      * 执行操作
      *
      * @param node
+     * @return 是否执行成功
      */
-    void execute(Node node);
+    boolean execute(Node node);
 }

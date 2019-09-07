@@ -15,6 +15,7 @@ import com.lty.refactor.utils.AnnotationUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -22,10 +23,11 @@ import java.util.stream.Collectors;
  */
 public class ConstructorInjectionRefactor implements Refactor {
     @Override
-    public void execute(Node node) {
+    public boolean execute(Node node) {
+        AtomicBoolean state = new AtomicBoolean(false);
         node
                 //查找所有Controller和Service类
-                .findAll(ClassOrInterfaceDeclaration.class, classOrInterfaceDeclaration -> AnnotationUtils.contains(classOrInterfaceDeclaration.getAnnotations(), "Controller", "Service"))
+                .findAll(ClassOrInterfaceDeclaration.class, classOrInterfaceDeclaration -> AnnotationUtils.contains(classOrInterfaceDeclaration.getAnnotations(), "Controller", "Service") && !classOrInterfaceDeclaration.isAbstract())
                 .forEach(classOrInterfaceDeclaration -> {
                     List<VariableDeclarator> fieldList = new ArrayList<>();
                     classOrInterfaceDeclaration
@@ -39,27 +41,32 @@ public class ConstructorInjectionRefactor implements Refactor {
                                         .filter(annotationExpr -> !"Autowired".equals(annotationExpr.getName().asString()))
                                         .collect(Collectors.toCollection(NodeList::new)));
                             });
-                    ConstructorDeclaration constructorDeclaration = classOrInterfaceDeclaration.addConstructor(Modifier.Keyword.PUBLIC);
-                    //成员排序
-                    classOrInterfaceDeclaration.getMembers().sort(Comparator.comparing(o -> {
-                        if (o instanceof FieldDeclaration) {
-                            return 1;
-                        } else if (o instanceof ConstructorDeclaration) {
-                            return 2;
-                        } else if (o instanceof MethodDeclaration) {
-                            return 3;
-                        } else {
-                            return 9;
-                        }
-                    }));
-                    //MarkAnnotation不带空括号
-                    constructorDeclaration.addMarkerAnnotation("Autowired");
-                    fieldList.stream()
-                            .map(variableDeclarator -> new Parameter(variableDeclarator.getType(), variableDeclarator.getNameAsString()))
-                            .forEach(constructorDeclaration::addParameter);
-                    constructorDeclaration.setBody(new BlockStmt(fieldList.stream()
-                            .map(variableDeclarator -> new ExpressionStmt(new AssignExpr(new FieldAccessExpr(new ThisExpr(), variableDeclarator.getNameAsString()), new NameExpr(variableDeclarator.getNameAsString()), AssignExpr.Operator.ASSIGN)))
-                            .collect(Collectors.toCollection(NodeList::new))));
+                    //如果已有构造函数，则不执行
+                    if (classOrInterfaceDeclaration.getConstructors().size() == 0 && fieldList.size() > 0) {
+                        ConstructorDeclaration constructorDeclaration = classOrInterfaceDeclaration.addConstructor(Modifier.Keyword.PUBLIC);
+                        //成员排序
+                        classOrInterfaceDeclaration.getMembers().sort(Comparator.comparing(o -> {
+                            if (o instanceof FieldDeclaration) {
+                                return 1;
+                            } else if (o instanceof ConstructorDeclaration) {
+                                return 2;
+                            } else if (o instanceof MethodDeclaration) {
+                                return 3;
+                            } else {
+                                return 9;
+                            }
+                        }));
+                        //MarkAnnotation不带空括号
+                        constructorDeclaration.addMarkerAnnotation("Autowired");
+                        fieldList.stream()
+                                .map(variableDeclarator -> new Parameter(variableDeclarator.getType(), variableDeclarator.getNameAsString()))
+                                .forEach(constructorDeclaration::addParameter);
+                        constructorDeclaration.setBody(new BlockStmt(fieldList.stream()
+                                .map(variableDeclarator -> new ExpressionStmt(new AssignExpr(new FieldAccessExpr(new ThisExpr(), variableDeclarator.getNameAsString()), new NameExpr(variableDeclarator.getNameAsString()), AssignExpr.Operator.ASSIGN)))
+                                .collect(Collectors.toCollection(NodeList::new))));
+                        state.set(true);
+                    }
                 });
+        return state.get();
     }
 }

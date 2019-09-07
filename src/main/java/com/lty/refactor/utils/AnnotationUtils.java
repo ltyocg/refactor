@@ -2,6 +2,7 @@ package com.lty.refactor.utils;
 
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public final class AnnotationUtils {
      */
     public static boolean contains(List<AnnotationExpr> annotationExprList, String... annotationAsString) {
         for (AnnotationExpr annotation : annotationExprList) {
-            if (annotationAsString.equals(annotation.getNameAsString())) {
+            if (Arrays.binarySearch(annotationAsString, annotation.getNameAsString()) >= 0) {
                 return true;
             }
         }
