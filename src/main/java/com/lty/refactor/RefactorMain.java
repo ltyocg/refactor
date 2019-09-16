@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 public class RefactorMain {
     public static void main(String[] args) {
         FileUtils.listFiles(new File("E:\\workplace\\QiQiHaEr\\Inspur.Dzzw.CloudAccept_Pro\\src\\main\\java"), new String[]{"java"}, true).parallelStream().forEach(file -> {
-            CompilationUnit compilationUnit = refactor(file, new ConstructorInjectionRefactor());
+            CompilationUnit compilationUnit = refactor(file, new ControllerRefactor());
             PrettyPrinterConfiguration prettyPrinterConfiguration = new PrettyPrinterConfiguration().setVisitorFactory(MyPrintVisitor::new);
             if (compilationUnit != null) {
                 try {

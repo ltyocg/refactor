@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * 将原来的{@code @Autowired}注入改成构造函数注入
  */
-public class ConstructorInjectionRefactor implements Refactor {
+public class ConstructorInjectionRefactor extends Refactor {
     @Override
     public boolean execute(Node node) {
         AtomicBoolean state = new AtomicBoolean(false);
