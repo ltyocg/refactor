@@ -6,12 +6,15 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
+/**
+ * 解析
+ */
 class Parse {
     /**
      * 官方示例
@@ -32,7 +35,7 @@ class Parse {
     }
 
     @Test
-    void jar() throws FileNotFoundException {
-        System.out.println(StringUtils.replaceEach("@#", new String[]{"@", "#"}, new String[]{"1"}));
+    void body() throws FileNotFoundException {
+        CompilationUnit compilationUnit = StaticJavaParser.parse(new File(""));
     }
 }

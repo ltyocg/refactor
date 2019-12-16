@@ -10,6 +10,9 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSol
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import org.junit.jupiter.api.Test;
 
+/**
+ * 分析
+ */
 class Analyze {
     /**
      * 官方示例

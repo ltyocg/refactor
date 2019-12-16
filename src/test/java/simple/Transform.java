@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+/**
+ * 变换
+ */
 class Transform {
     /**
      * 官方示例
@@ -20,7 +23,7 @@ class Transform {
         CompilationUnit compilationUnit = StaticJavaParser.parse("class A { }");
         compilationUnit.findAll(ClassOrInterfaceDeclaration.class).stream()
                 .filter(c -> !c.isInterface()
-                        && c.isAbstract()
+                        && !c.isAbstract()
                         && !c.getNameAsString().startsWith("Abstract"))
                 .forEach(c -> {
                     String oldName = c.getNameAsString();
